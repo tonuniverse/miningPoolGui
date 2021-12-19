@@ -7,7 +7,7 @@ Open-source GUI wrapper of github.com/tonuniverse/miningPoolCli
 You can always get the source code from the github repository page: <br>
 https://github.com/tonuniverse/miningPoolGui
 
-## Build
+## Build on windows x64
 
 - download latest windows release from https://github.com/tonuniverse/miningPoolCli/releases
 - run `mkdir cli` 
