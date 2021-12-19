@@ -1,3 +1,3 @@
 ## miningPoolGui
 
-Open-source GUI wrapper of https://github.com/tonuniverse/miningPoolCli
+Open-source GUI wrapper of github.com/tonuniverse/miningPoolCli
