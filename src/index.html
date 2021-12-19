@@ -1,3 +1,23 @@
+<!--
+miningPoolGui – open-source GUI wrapper of github.com/tonuniverse/miningPoolCli
+
+Copyright (C) 2021 tonuniverse.com
+
+This file is part of miningPoolGui.
+
+miningPoolGui is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+miningPoolGui is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with miningPoolGui.  If not, see <https://www.gnu.org/licenses/>.
+*/-->
 <!DOCTYPE html>
 <html>
 
@@ -238,11 +258,16 @@
 
                                 if (response.data.user) {
                                     DATA = response.data.user
-                                        // if (first) {
+                                    if (first) {
 
-                                    // } else {
-                                    //     onenfoff()
-                                    // }
+                                    } else {
+                                        setTimeout(() => {
+                                            start()
+
+                                        }, 1000 * 1);
+                                    }
+
+
 
                                     first = 1;
 
@@ -271,22 +296,66 @@
                 });
             }
 
+            let togle = false;
 
-            // function start() {
-            //     ipcRenderer.invoke('some-name', {
-            //         data: "start",
-            //         user: DATA
-            //     }).then((result) => {
-            //         // ...
-            //     })
+            function start() {
+                if (!togle) {
+                    togle = true;
+                    ipcRenderer.invoke('some-name', {
+                        data: "start",
+                        user: DATA
+                    }).then((result) => {
+                        // ...
+                    })
 
-            //     document.querySelector('#on').classList = "is-active active2";
-            //     document.querySelector('#off').classList = ""
-            //     document.querySelector('#text-status').innerText = "Working"
-            //     togle = true;
-            // }
+                    document.querySelector('#on').classList = "is-active active2";
+                    document.querySelector('#off').classList = ""
+                    document.querySelector('#text-status').innerText = "Working"
+                } else {
+                    console.log("Уже запущено")
+                }
 
-            let togle = 0;
+            }
+
+            function kill() {
+                togle = false;
+                document.querySelector('#off').classList = "is-active active1";
+                document.querySelector('#on').classList = ""
+                document.querySelector('#text-status').innerText = "Pause"
+
+                document.querySelector('#hashrate').innerText = "~" + 0 + " Mh/s";
+
+                ipcRenderer.invoke('some-name', {
+                    data: "kill",
+                    user: DATA
+                }).then((result) => {
+                    // ...
+                })
+
+                setTimeout(() => {
+                    si.graphics()
+                        .then(data => {
+                            document.querySelector('#gpus').innerHTML = "";
+                            console.log(data);
+                            document.querySelector('#count_d').innerText = data.controllers.length + " devices";
+
+                            for (let i = 0; i < data.controllers.length; i++) {
+                                document.querySelector('#gpus').innerHTML +=
+                                    '<tr><th>' +
+                                    i +
+                                    '</th><td class="left"><strong class="has-text-white">' +
+                                    data.controllers[i].model +
+                                    '</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>' +
+                                    (data.controllers[i].temperatureGpu ? data.controllers[i].temperatureGpu + " °C" : "") +
+                                    '</td><td>' +
+                                    (data.controllers[i].fanSpeed ? "Fan " + data.controllers[i].fanSpeed + "%" : "") +
+                                    '</td><td class="mhs">' + (data.controllers[i].driverVersion ? "driver " + data.controllers[i].driverVersion : "") + '</td></tr>';
+                            }
+                        })
+                        .catch(error => console.error(error));
+                }, 1000 * 5);
+            }
+
 
             let it = 0;
 
@@ -352,7 +421,6 @@
                                     it++;
 
 
-
                                     console.log(response.data.total_hashrate)
 
 
@@ -361,7 +429,7 @@
 
                                     // document.querySelector('#gpus').innerHTML = "";
 
-                                    if (it == 15) {
+                                    if (it == 7) {
                                         it = 0;
                                         si.graphics()
                                             .then(data => {
@@ -480,10 +548,10 @@
                 }, false);
 
                 document.getElementById("start2").addEventListener("click", function(e) { //off
-                    onenfoff()
+                    kill()
                 }, false);
                 document.getElementById("start1").addEventListener("click", function(e) { //on
-                    onenfoff()
+                    start()
                 }, false);
 
 
@@ -497,12 +565,9 @@
                     getStat()
 
                     getStatGpu()
-                }, 1000 * 1);
+                }, 1000 * 2);
 
-                // setTimeout(() => {
-                //     start()
 
-                // }, 1000 * 1);
 
 
                 si.graphics()

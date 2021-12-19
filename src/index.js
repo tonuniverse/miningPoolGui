@@ -1,3 +1,24 @@
+/*
+miningPoolGui – open-source GUI wrapper of github.com/tonuniverse/miningPoolCli
+
+Copyright (C) 2021 tonuniverse.com
+
+This file is part of miningPoolGui.
+
+miningPoolGui is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+miningPoolGui is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with miningPoolGui.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { execFile, spawn } from 'child_process';
 const AutoLaunch = require('auto-launch');
@@ -67,23 +88,13 @@ const createWindow = async() => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        // kill();
+        kill();
         mainWindow = null;
     });
 
-    // mainWindow.on('close', async(e) => {
-    //     await kill()
-    //         // const choice = this.dialog.showMessageBox(
-    //         //     this.mainWindow, {
-    //         //         type: 'question',
-    //         //         buttons: ['Yes', 'No, hang on', 'third option'],
-    //         //         title: 'Confirm your actions',
-    //         //         message: 'Do you really want to close the application?'
-    //         //     }
-    //         // );
-    //         // console.log('CHOICE: ', choice);
-    //         // if (choice > 0) e.preventDefault();
-    // });
+    mainWindow.on('close', async(e) => {
+        kill()
+    });
 
 
 
@@ -125,8 +136,9 @@ app.on('ready', createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-    // On OS X it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
+    kill()
+        // On OS X it is common for applications and their menu bar
+        // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
         // kill().then(() => {
         app.quit();
@@ -146,46 +158,54 @@ app.on('activate', () => {
 let process1;
 // spawn('ls', ['-lh', '/usr']);
 async function run(data) {
-    if (process1) {} else {
-        process1 = spawn(
-            process.cwd() + `/cli/miningPoolCli.exe`, [
-                '-serve-stat',
-                '-pool-id=' + data.user.token
-            ], { timeout: 0, cwd: './cli/' });
-
-        // process1 = execFile(
-        //     'cmd',
-        //     process.cwd() + `/cli/miningPoolCli.exe` +
-        //     ' -serve-stat' +
-        //     ' -pool-id=' + data.user.token, { timeout: 0, cwd: './cli/' },
-        //     (error, stdout, stderr) => {
-        //         console.log(error)
-        //         console.log(stdout)
-        //         console.log(stderr)
-        //     });
+    if (process1) {
+        kill()
     }
+    process1 = spawn(
+        process.cwd() + `/cli/miningPoolCli.exe`, [
+            '-serve-stat',
+            '-pool-id=' + data.user.token,
+            '-handle-kill'
+        ], { timeout: 0, cwd: './cli/' },
+        (error, stdout, stderr) => {
+            console.log(error)
+            console.log(stdout)
+            console.log(stderr)
+        });
+
+    // process1 = execFile(
+    //     'cmd',
+    //     process.cwd() + `/cli/miningPoolCli.exe` +
+    //     ' -serve-stat' +
+    //     ' -pool-id=' + data.user.token, { timeout: 0, cwd: './cli/' },
+    //     (error, stdout, stderr) => {
+    //         console.log(error)
+    //         console.log(stdout)
+    //         console.log(stderr)
+    //     });
+
 
 
 }
 
 async function kill() {
 
-    // fs.readFile('./cli/serveraddr.txt', 'utf8', function(error, fileContent) {
-    //     if (error) {
-    //         // throw error
-    //         console.log(error)
-    //     } else {
-    //         axios.post('http://' + fileContent + '/kill')
-    //             .then(function(response) {
-    //                 console.log(response)
-    //                 return true;
-    //             })
-    //     }
-    // });
+    fs.readFile('./cli/serveraddr.txt', 'utf8', function(error, fileContent) {
+        if (error) {
+            // throw error
+            console.log(error)
+        } else {
+            axios.post('http://' + fileContent + '/kill')
+                .then(function(response) {
+                    console.log(response.data)
+                    return true;
+                })
+        }
+    });
 
-    if (process1) {
-        process1.kill();
-    }
+    // if (process1) {
+    //     process1.kill();
+    // }
 }
 
 
