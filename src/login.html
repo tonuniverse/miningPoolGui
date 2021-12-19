@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- favicon -->
+    <link rel="icon" href="logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="logo.ico" type="image/x-icon">
+    <title>Ton Universe</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+        
+        html {
+            /* background-color: black; */
+            background-color: rgba(0, 0, 0, 0.01)!important;
+            overflow: hidden;
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Chrome/Safari/Opera */
+            -khtml-user-select: none;
+            /* Konqueror */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently
+                                        not supported by any browser */
+            /* border-radius: 15px!important; */
+        }
+        
+        body {
+            min-height: 100%!important;
+            /* background-color: transparent!important; */
+            border-radius: 25px!important;
+            background-color: rgba(0, 0, 0, 0.96)!important;
+        }
+        
+        .section {
+            padding-top: 1rem;
+            /* border-radius: 15px!important; */
+        }
+        
+        .box,
+        table {
+            /* text-align: center; */
+            /* background-color: gray; */
+            transition: 0.1s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+        }
+        
+        .box:hover,
+        table:hover,
+        .box:hover>table {
+            background-color: rgb(18, 18, 18)!important;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        table,
+        td,
+        tr,
+        th {
+            border-collapse: collapse;
+            border: 0px!important;
+        }
+        
+        #title-bar {
+            -webkit-user-select: none;
+            -webkit-app-region: drag;
+            padding: 1rem 1.7rem 0rem;
+        }
+        
+        #close-btn,
+        #settings {
+            -webkit-app-region: no-drag;
+        }
+        
+        #close-btn:hover {
+            background-color: #FF5F30;
+        }
+        
+        #settings {
+            color: #3390EC!important
+        }
+        
+        #settings:hover {
+            background-color: #3390EC;
+        }
+        
+        a,
+        a:hover {
+            /* color: #3390EC!important */
+            text-decoration: none!important;
+        }
+        
+        #title-bar a,
+        #title-bar button {
+            color: #fff!important;
+            width: 38px!important;
+            height: 40px!important;
+            padding: 7px 19px!important;
+        }
+        
+        #title-bar button span {
+            width: 24px!important;
+            height: 24px!important;
+            margin: 0!important;
+        }
+        
+        #title-bar a:hover,
+        #title-bar button:hover {
+            text-decoration: none!important;
+        }
+        /* .tabs.is-toggle li.is-active a {
+            background-color: #FF5F30;
+            border-color: #FF5F30;
+        } */
+        
+        .active2 a {
+            background-color: hsl(141, 71%, 48%)!important;
+            border-color: hsl(141, 71%, 48%)!important;
+        }
+        
+        .active1 a {
+            background-color: #FF5F30!important;
+            border-color: #FF5F30!important;
+        }
+        
+        .tabs.is-toggle a {
+            border-color: #3f3f3f;
+        }
+        
+        .tabs.is-toggle a:hover {
+            background-color: #3f3f3f;
+            border-color: #3f3f3f;
+            color: #fff;
+        }
+        
+         ::-webkit-input-placeholder {
+            /* Chrome */
+            color: rgba(255, 255, 255, 0.5)!important;
+        }
+        
+        input {
+            border-color: rgb(44, 44, 44)!important;
+        }
+    </style>
+    <script>
+        let togle = 0;
+
+        function onenfoff() {
+            togle = !togle;
+            if (togle) {
+                document.querySelector('#on').classList = "is-active active2";
+                document.querySelector('#off').classList = ""
+                document.querySelector('#text-status').innerText = "Working"
+            } else {
+                document.querySelector('#off').classList = "is-active active1";
+                document.querySelector('#on').classList = ""
+                document.querySelector('#text-status').innerText = "Pause"
+            }
+        }
+    </script>
+    <script>
+        (function() {
+            // Retrieve remote BrowserWindow
+            const {
+                BrowserWindow
+            } = require('electron').remote
+
+            const shell = require('electron').shell;
+
+            var fs = require('fs');
+
+            const axios = require('axios');
+
+            function login(token) {
+
+                axios.post('https://pool.tonuniverse.com/token', {
+                        token: token
+                    })
+                    .then(function(response) {
+                        // handle success
+                        console.log(response.data);
+
+                        if (response.data.user) {
+                            fs.writeFile("data", token, function(error) {
+
+                                if (error) throw error; // если возникла ошибка
+                                console.log("Асинхронная запись файла завершена. Содержимое файла:");
+
+                                window.location.href = "index.html"
+                                    // let data = fs.readFileSync("data", "utf8");
+                                    // console.log(data); // выводим считанные данные
+                            });
+                        }
+                    })
+                    .catch(function(error) {
+                        // handle error
+                        console.log(error);
+                    })
+                    .then(function() {
+                        // always executed
+                    });
+
+
+
+
+            }
+
+            function init() {
+                // Close app
+                document.getElementById("close-btn").addEventListener("click", (e) => {
+                    var window = BrowserWindow.getFocusedWindow();
+                    window.close();
+                });
+
+                document.getElementById("bot").addEventListener("click", function(e) {
+                    shell.openExternal('https://t.me/tonuniversebot');
+                }, false);
+
+                document.getElementById("login").addEventListener("click", function(e) {
+                    document.querySelector('#error1').style = "opacity: 0";
+                    let dd = document.querySelector('#pool_id').value;
+                    if (dd.length > 30 && dd.length < 35) {
+                        login(dd);
+                    } else {
+                        document.querySelector('#pool_id').classList = "input has-background-black has-text-white-ter is-danger";
+                        document.querySelector('#error1').style = "opacity: 1";
+                    }
+
+                }, false);
+            };
+
+            document.onreadystatechange = () => {
+                if (document.readyState == "complete") {
+                    init();
+                }
+            };
+        })();
+    </script>
+</head>
+
+<body class="">
+
+
+
+    <div class="container" id="title-bar">
+        <div class="columns">
+            <div class="column is-3">
+                <img src="logo-light.svg" alt="Tonuniverse">
+            </div>
+            <div class="column ">
+
+            </div>
+            <div class="column is-2" style="text-align: right;">
+                <p class="buttons" style="justify-content: flex-end;">
+                    <!-- <button class="button is-ghost is-rounded" id="settings">
+                        <span class="icon ">
+                            <i class="fas fa-cog"></i>
+                      </span>
+                    </button> -->
+                    <button class="button is-ghost is-rounded" id="close-btn">
+                        <span class="icon ">
+                            <i class="fas fa-times"></i>
+                      </span>
+                    </button>
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <section class="section ">
+
+        <div class="container" style="margin-top: 20vh;">
+            <div class="columns">
+
+                <div class="column is-half is-offset-one-quarter">
+                    <div class="box has-background-black-bis">
+                        <h2 class="title is-4 has-text-white">Log In</h2>
+                        <h5 class="subtitle is-6 has-text-grey-light">Go to telegram bot <a href="#" id="bot">@tonuniversebot</a> and get Pool ID</h5>
+
+                        <div class="field">
+                            <!-- <label class="label">Name</label> -->
+                            <div class="control">
+                                <input class="input has-background-black has-text-white-ter" type="text" placeholder="Pool ID" id="pool_id">
+                                <p class="help is-danger" id="error1" style="opacity: 0">This Pool ID is invalid</p>
+                            </div>
+                        </div>
+
+
+                        <button class="button is-success is-fullwidth is-medium" style="background-color: #3390EC;" id="login">Start Mining 🤑</button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- favicon -->
+    <link rel="icon" href="logo_256.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="logo_256.ico" type="image/x-icon">
+    <title>Ton Universe</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+        
+        html {
+            /* background-color: black; */
+            background-color: rgba(0, 0, 0, 0.01)!important;
+            overflow: hidden;
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Chrome/Safari/Opera */
+            -khtml-user-select: none;
+            /* Konqueror */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently
+                                        not supported by any browser */
+            /* border-radius: 15px!important; */
+        }
+        
+        body {
+            min-height: 100%!important;
+            /* background-color: transparent!important; */
+            border-radius: 25px!important;
+            background-color: rgba(0, 0, 0, 0.96)!important;
+        }
+        
+        .section {
+            padding-top: 1rem;
+            /* border-radius: 15px!important; */
+        }
+        
+        .box,
+        table {
+            /* text-align: center; */
+            /* background-color: gray; */
+            transition: 0.1s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+        }
+        
+        .box:hover,
+        table:hover,
+        .box:hover>table {
+            background-color: rgb(18, 18, 18)!important;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        table,
+        td,
+        tr,
+        th {
+            border-collapse: collapse;
+            border: 0px!important;
+        }
+        
+        #title-bar {
+            -webkit-user-select: none;
+            -webkit-app-region: drag;
+            padding: 1rem 1.7rem 0rem;
+        }
+        
+        #close-btn,
+        #settings {
+            -webkit-app-region: no-drag;
+        }
+        
+        #close-btn:hover {
+            background-color: #FF5F30;
+        }
+        
+        #settings {
+            color: #3390EC!important
+        }
+        
+        #settings:hover {
+            background-color: #3390EC;
+        }
+        
+        a,
+        a:hover {
+            /* color: #3390EC!important */
+            text-decoration: none!important;
+        }
+        
+        #title-bar a,
+        #title-bar button {
+            color: #fff!important;
+            width: 38px!important;
+            height: 40px!important;
+            padding: 7px 19px!important;
+        }
+        
+        #title-bar button span {
+            width: 24px!important;
+            height: 24px!important;
+            margin: 0!important;
+        }
+        
+        #title-bar a:hover,
+        #title-bar button:hover {
+            text-decoration: none!important;
+        }
+        /* .tabs.is-toggle li.is-active a {
+            background-color: #FF5F30;
+            border-color: #FF5F30;
+        } */
+        
+        .active2 a {
+            background-color: hsl(141, 71%, 48%)!important;
+            border-color: hsl(141, 71%, 48%)!important;
+        }
+        
+        .active1 a {
+            background-color: #FF5F30!important;
+            border-color: #FF5F30!important;
+        }
+        
+        .tabs.is-toggle a {
+            border-color: #3f3f3f;
+        }
+        
+        .tabs.is-toggle a:hover {
+            background-color: #3f3f3f;
+            border-color: #3f3f3f;
+            color: #fff;
+        }
+        
+        .modal-background {
+            border-radius: 25px;
+            backdrop-filter: blur(8px);
+        }
+        
+        .modal {
+            border-radius: 25px;
+        }
+        
+        .box {
+            min-height: 125px;
+        }
+        
+        td.left {
+            text-align: left!important;
+        }
+        /* .mhs {
+            background-color: seagreen;
+            border-radius: 15px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        tr {
+            margin: 10px 0!important;
+        } */
+    </style>
+    <script>
+        function modal() {
+            document.querySelector('#modal1').classList = "modal is-active";
+        }
+
+        function close_modal() {
+            document.querySelector('#modal1').classList = "modal";
+        }
+    </script>
+    <script>
+        let DATA;
+
+
+        (function() {
+            // Retrieve remote BrowserWindow
+            const {
+                BrowserWindow
+            } = require('electron').remote
+
+            const shell = require('electron').shell;
+
+            const ipcRenderer = require('electron').ipcRenderer;
+
+
+            var fs = require('fs');
+            const axios = require('axios');
+
+            var os = require("os");
+            var os2 = require('os-utils');
+
+            const si = require('systeminformation');
+
+
+            let first = 0;
+
+
+
+            function logout() {
+                fs.unlink("data", (err) => {
+                    if (err) {
+                        console.log(err)
+                    } // если возникла ошибка    
+                    else {
+                        console.log("hello.txt was deleted")
+
+                        window.location.href = "login.html"
+                    }
+
+                });
+            }
+
+            function readLogin() {
+                fs.readFile('data', 'utf8', function(error, fileContent) {
+                    if (error) {
+                        // throw error
+                    } else {
+                        axios.post('https://pool.tonuniverse.com/token', {
+                                token: fileContent
+                            })
+                            .then(function(response) {
+                                // handle success
+                                console.log(response.data);
+
+                                if (response.data.user) {
+                                    DATA = response.data.user
+                                        // if (first) {
+
+                                    // } else {
+                                    //     onenfoff()
+                                    // }
+
+                                    first = 1;
+
+
+
+                                    document.querySelector('#balance_user').innerText = (response.data.user.balance / Math.pow(10, 9)).toFixed(9) + " 💎";
+                                    document.querySelector('#founds_user').innerText = 0 + " Founds";
+
+                                    document.querySelector('#wallet_user').innerText = response.data.user.address;
+                                    document.querySelector('#token_user').innerText = response.data.user.token;
+
+
+                                }
+                            })
+                            .catch(function(error) {
+                                // handle error
+                                console.log(error);
+                            })
+                            .then(function() {
+                                // always executed
+                            });
+                        console.log(fileContent); // содержимое файла
+
+                    }
+
+                });
+            }
+
+
+            // function start() {
+            //     ipcRenderer.invoke('some-name', {
+            //         data: "start",
+            //         user: DATA
+            //     }).then((result) => {
+            //         // ...
+            //     })
+
+            //     document.querySelector('#on').classList = "is-active active2";
+            //     document.querySelector('#off').classList = ""
+            //     document.querySelector('#text-status').innerText = "Working"
+            //     togle = true;
+            // }
+
+            let togle = 0;
+
+            let it = 0;
+
+            function onenfoff() {
+                togle = !togle;
+                if (togle) {
+
+
+                    // shell2.cd('D:/project/tonGui/danila');
+
+                    // shell2.config.execPath = shell2.which('node').toString()
+
+                    // shell2.exec('miner-windows.exe https://other.tonuniverse.com ba73d5811fc3b1518d6f36e82f03d119');
+
+                    ipcRenderer.invoke('some-name', {
+                        data: "start",
+                        user: DATA
+                    }).then((result) => {
+                        // ...
+                    })
+
+                    document.querySelector('#on').classList = "is-active active2";
+                    document.querySelector('#off').classList = ""
+                    document.querySelector('#text-status').innerText = "Working"
+                } else {
+                    document.querySelector('#off').classList = "is-active active1";
+                    document.querySelector('#on').classList = ""
+                    document.querySelector('#text-status').innerText = "Pause"
+
+                    ipcRenderer.invoke('some-name', {
+                        data: "kill",
+                        user: DATA
+                    }).then((result) => {
+                        // ...
+                    })
+
+
+                }
+            }
+
+            function getStatGpu() {
+                fs.readFile('./cli/serveraddr.txt', 'utf8', function(error, fileContent) {
+                    if (error) {
+                        // throw error
+                        console.log(error)
+                    } else {
+                        axios.post('http://' + fileContent + '/stat', {
+                                token: fileContent
+                            })
+                            .then(function(response) {
+                                // handle success
+                                console.log(response.data);
+
+
+                                if (response.data.status) {
+
+                                    document.querySelector('#on').classList = "is-active active2";
+                                    document.querySelector('#off').classList = ""
+                                    document.querySelector('#text-status').innerText = "Working"
+
+                                    togle = 1;
+
+                                    it++;
+
+
+
+                                    console.log(response.data.total_hashrate)
+
+
+                                    document.querySelector('#hashrate').innerText = "~" + response.data.total_hashrate.toFixed(0) + " Mh/s";
+                                    document.querySelector('#count_d').innerText = response.data.gpus.length + " devices";
+
+                                    // document.querySelector('#gpus').innerHTML = "";
+
+                                    if (it == 15) {
+                                        it = 0;
+                                        si.graphics()
+                                            .then(data => {
+                                                document.querySelector('#gpus').innerHTML = "";
+                                                console.log(data);
+
+                                                let GPU = data.controllers;
+
+                                                for (let i = 0; i < GPU.length; i++) {
+                                                    for (let i = 0; i < response.data.gpus.length; i++) {
+                                                        if (response.data.gpus[i].device_name.toLowerCase() === GPU[i].model.toLowerCase() || response.data.gpus[i].device_name.toLowerCase() === GPU[i].name.toLowerCase()) {
+                                                            GPU[i].hashrate = response.data.gpus[i].hashrate;
+                                                            // alert(1)
+                                                        }
+                                                    }
+                                                    document.querySelector('#gpus').innerHTML +=
+                                                        '<tr><th>' +
+                                                        i +
+                                                        '</th><td class="left"><strong class="has-text-white">' +
+                                                        GPU[i].model +
+                                                        '</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td>' +
+                                                        (GPU[i].temperatureGpu ? GPU[i].temperatureGpu + " °C" : "") +
+                                                        '</td><td>' +
+                                                        (GPU[i].fanSpeed ? "Fan " + GPU[i].fanSpeed + "%" : "") +
+                                                        '</td><td class="mhs">' + (GPU[i].driverVersion ? "driver " + GPU[i].driverVersion : "") + '</td><td>' +
+                                                        (GPU[i].hashrate ? GPU[i].hashrate + "Mh/s" : "") +
+                                                        '</td></tr>';
+                                                }
+                                            })
+                                            .catch(error => console.error(error));
+                                    }
+
+
+                                    // for (let i = 0; i < response.data.gpus.length; i++) {
+                                    //     // document.querySelector('#gpus').innerHTML +=
+                                    //     //     '<tr><th>' +
+                                    //     //     response.data.gpus[i].device_id +
+                                    //     //     '</th><td class="left"><strong class="has-text-white">' +
+                                    //     //     response.data.gpus[i].device_name +
+                                    //     //     '</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>36 °C</td><td>Fan 35%</td><td class="mhs">' +
+                                    //     //     response.data.gpus[i].hashrate + ' Mh/s</td></tr>';
+
+
+
+                                    // }
+
+                                }
+                            })
+                            .catch(function(error) {
+                                // handle error
+                                console.log(error);
+                            })
+                            .then(function() {
+                                // always executed
+                            });
+                    }
+                })
+            }
+
+
+            function getStat() {
+                let cpu = os.cpus();
+
+                var bytesAvailable = os.totalmem();
+
+                let mem = (bytesAvailable / 1073741824);
+
+                document.querySelector('#cpu-name').innerText = cpu.length + " x " + cpu[0].model;
+                // document.querySelector('#mem').innerText = "MEM " + mem.toFixed(2) + "Gb";
+
+
+                os2.cpuUsage(function(v) {
+                    // console.log('CPU Usage (%): ' + v);
+                    let load = v;
+                    document.querySelector('#cpu-load').innerText = "CPU " + (v * 100).toFixed(0) + " %"
+                });
+
+            }
+
+            function init() {
+                // Close app
+                document.getElementById("close-btn").addEventListener("click", (e) => {
+
+                    // fs.readFile('./cli/serveraddr.txt', 'utf8', function(error, fileContent) {
+                    //     if (error) {
+                    //         // throw error
+                    //         // var window = BrowserWindow.getFocusedWindow();
+                    //         // window.close();
+                    //         console.log(error)
+                    //     } else {
+                    //         axios.post('http://' + fileContent + '/kill')
+                    //             .then(function(response) {
+                    //                 // var window = BrowserWindow.getFocusedWindow();
+                    //                 // window.close();
+                    //             })
+                    //     }
+                    // })
+
+                    // } else {
+                    //     var window = BrowserWindow.getFocusedWindow();
+                    //     window.close();
+                    // }
+                    var window = BrowserWindow.getFocusedWindow();
+                    window.close();
+
+
+
+                });
+
+                document.getElementById("bot").addEventListener("click", function(e) {
+                    shell.openExternal('https://t.me/tonuniversebot');
+                }, false);
+
+                document.getElementById("log_out").addEventListener("click", function(e) {
+                    logout()
+                }, false);
+
+                document.getElementById("start2").addEventListener("click", function(e) { //off
+                    onenfoff()
+                }, false);
+                document.getElementById("start1").addEventListener("click", function(e) { //on
+                    onenfoff()
+                }, false);
+
+
+                readLogin()
+
+                setInterval(() => {
+                    readLogin()
+                }, 1000 * 10);
+
+                setInterval(() => {
+                    getStat()
+
+                    getStatGpu()
+                }, 1000 * 1);
+
+                // setTimeout(() => {
+                //     start()
+
+                // }, 1000 * 1);
+
+
+                si.graphics()
+                    .then(data => {
+                        document.querySelector('#gpus').innerHTML = "";
+                        console.log(data);
+                        document.querySelector('#count_d').innerText = data.controllers.length + " devices";
+
+                        for (let i = 0; i < data.controllers.length; i++) {
+                            document.querySelector('#gpus').innerHTML +=
+                                '<tr><th>' +
+                                i +
+                                '</th><td class="left"><strong class="has-text-white">' +
+                                data.controllers[i].model +
+                                '</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>' +
+                                (data.controllers[i].temperatureGpu ? data.controllers[i].temperatureGpu + " °C" : "") +
+                                '</td><td>' +
+                                (data.controllers[i].fanSpeed ? "Fan " + data.controllers[i].fanSpeed + "%" : "") +
+                                '</td><td class="mhs">' + (data.controllers[i].driverVersion ? "driver " + data.controllers[i].driverVersion : "") + '</td></tr>';
+                        }
+                    })
+                    .catch(error => console.error(error));
+            };
+
+            getStatGpu()
+
+            document.onreadystatechange = () => {
+                if (document.readyState == "complete") {
+                    init();
+                }
+            };
+        })();
+    </script>
+</head>
+
+<body class="">
+
+
+
+    <div class="container" id="title-bar">
+        <div class="columns">
+            <div class="column is-3">
+                <img src="logo-light.svg" alt="Tonuniverse">
+            </div>
+            <div class="column ">
+
+            </div>
+            <div class="column is-2" style="text-align: right;">
+                <p class="buttons" style="justify-content: flex-end;">
+                    <button class="button is-ghost is-rounded" id="settings" onclick="modal()">
+                        <span class="icon ">
+                            <i class="fas fa-cog"></i>
+                      </span>
+                    </button>
+                    <button class="button is-ghost is-rounded" id="close-btn">
+                        <span class="icon ">
+                            <i class="fas fa-times"></i>
+                      </span>
+                    </button>
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <section class="section ">
+
+        <div class="container">
+            <div class="columns">
+                <div class="column is-3">
+                    <div class="box has-background-black-bis center">
+                        <div class="tabs is-toggle is-fullwidth " style="margin-bottom: 1rem">
+                            <ul>
+                                <li class="is-active active1" id="off">
+                                    <a id="start2">
+                                        <span>Off</span>
+                                    </a>
+                                </li>
+                                <li id="on">
+                                    <a id="start1">
+                                        <span>On</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <h5 class="subtitle is-5 has-text-grey-light" id="text-status">Pause</h5>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box has-background-black-bis">
+                        <p class="subtitle is-6 has-text-grey-light">Hashrate</p>
+                        <h2 class="title is-4 has-text-white" id="hashrate"> ~0 Mh/s</h2>
+
+                        <h5 class="subtitle is-6 has-text-grey-light" id="count_d">0 devices</h5>
+
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box has-background-black-bis">
+                        <p class="subtitle is-6 has-text-grey-light">Balance</p>
+                        <h2 class="title is-4 has-text-white" id="balance_user"> 100.000000000 💎</h2>
+
+                        <h5 class="subtitle is-6 has-text-grey-light" id="founds_user">35 Founds</h5>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="box has-background-black-bis">
+                        <p class="subtitle is-6 has-text-grey-light" id="cpu-name">-- x --</p>
+                        <h2 class="title is-4 has-text-white" id="cpu-load"> 0%</h2>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="box has-background-black-bis center">
+                <table class="table is-fullwidth has-background-black-bis ">
+                    <tbody class="has-text-white" id="gpus">
+                        <!-- <tr>
+                            <th>0</th>
+                            <td><strong class="has-text-white">NVIDIA RTX 3070</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>36 °C</td>
+                            <td>Fan 35%</td>
+                            <td>Load 100%</td>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <td><strong class="has-text-white">NVIDIA RTX 3070</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>36 °C</td>
+                            <td>Fan 35%</td>
+                            <td>Load 100%</td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+
+
+    <div class="modal" id="modal1">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box has-background-black-bis">
+                <button class="modal-close is-large" aria-label="close" onclick="close_modal()"></button>
+
+                <table class="table is-fullwidth has-background-black-bis ">
+                    <tbody class="has-text-white">
+                        <tr>
+                            <td><strong class="has-text-white">Pool ID</strong></td>
+                            <td id="token_user">Load 100%</td>
+                        </tr>
+                        <tr>
+                            <td><strong class="has-text-white">Wallet</strong></td>
+                            <td id="wallet_user">Load 100%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="buttons">
+                    <button class="button is-info" id="bot">Telegram bot</button>
+                    <button class="button is-danger" id="log_out">Log Out</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+
+</html>
