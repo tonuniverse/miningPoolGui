@@ -1,6 +1,8 @@
 ## miningPoolGui
 
-Open-source GUI wrapper of github.com/tonuniverse/miningPoolCli
+Open-source GUI wrapper of [miningPoolCli](https://github.com/tonuniverse/miningPoolCli)
+
+To use with tonuniverse mining pool, follow the instructions for windows at: [tonuniverse.com](https://tonuniverse.com) 
 
 ## Source code
 
