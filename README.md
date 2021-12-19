@@ -4,7 +4,7 @@ Open-source GUI wrapper of github.com/tonuniverse/miningPoolCli
 
 ## Source code
 
-You can always get the source code from the github repository page:
+You can always get the source code from the github repository page: <br>
 https://github.com/tonuniverse/miningPoolGui
 
 ## Build
@@ -16,6 +16,10 @@ https://github.com/tonuniverse/miningPoolGui
 - run `yarn run dist`
 - Copy folder `cli` to `\dist\win-unpacked`
 - done; your built of the application is in `\dist\win-unpacked`
+
+## Usage
+
+Run `Ton Universe.exe` file
 
 ## LICENSE
 
